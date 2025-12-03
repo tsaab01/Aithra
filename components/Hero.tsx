@@ -23,10 +23,15 @@ const Hero: React.FC = () => {
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
     camera.position.z = 4;
 
-    // Renderer
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    // Renderer - Optimized for Performance
+    const renderer = new THREE.WebGLRenderer({ 
+      alpha: true, 
+      antialias: true,
+      powerPreference: "high-performance"
+    });
     renderer.setSize(width, height);
-    renderer.setPixelRatio(window.devicePixelRatio);
+    // Cap pixel ratio at 2 to avoid huge performance hits on Retina/4K screens
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);
 
     // --- Objects ---
@@ -36,7 +41,7 @@ const Hero: React.FC = () => {
     // 1. Outer Wireframe Sphere (Icosahedron)
     const geometry = new THREE.IcosahedronGeometry(1.6, 1);
     const material = new THREE.MeshBasicMaterial({ 
-      color: 0x0066FF, 
+      color: 0x8B5CF6, // Neon Violet
       wireframe: true,
       transparent: true,
       opacity: 0.3
@@ -66,7 +71,7 @@ const Hero: React.FC = () => {
     particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
     const particlesMat = new THREE.PointsMaterial({
       size: 0.02,
-      color: 0x00CCFF,
+      color: 0x10B981, // Laser Emerald
       transparent: true,
       opacity: 0.6
     });
@@ -77,7 +82,7 @@ const Hero: React.FC = () => {
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
     scene.add(ambientLight);
     
-    const pointLight = new THREE.PointLight(0x0066FF, 2);
+    const pointLight = new THREE.PointLight(0x8B5CF6, 2);
     pointLight.position.set(2, 2, 2);
     scene.add(pointLight);
 
@@ -150,8 +155,8 @@ const Hero: React.FC = () => {
       className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-nexus-dark"
     >
       {/* Background Blobs */}
-      <div className="absolute top-0 -left-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
-      <div className="absolute top-0 -right-4 w-72 h-72 bg-cyan-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+      <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob"></div>
+      <div className="absolute top-0 -right-4 w-72 h-72 bg-emerald-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
       <div className="absolute -bottom-8 left-20 w-72 h-72 bg-indigo-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
 
       <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
@@ -165,14 +170,14 @@ const Hero: React.FC = () => {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-nexus-card border border-white/10 text-nexus-accent text-sm font-medium mb-6">
               <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-nexus-glow"></span>
               </span>
-              Accepting New Enterprise Clients
+              AITHRA SYSTEM ONLINE
             </div>
             <h1 className="text-5xl lg:text-7xl font-bold leading-tight tracking-tight mb-4">
               Scale Faster With <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-accent to-cyan-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-nexus-accent to-nexus-glow">
                 Intelligent AI
               </span>
             </h1>
@@ -198,14 +203,14 @@ const Hero: React.FC = () => {
           >
             <button 
               onClick={() => document.getElementById(SectionId.AUDIT)?.scrollIntoView({ behavior: 'smooth' })}
-              className="px-8 py-4 bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] animate-gradient-x text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(0,102,255,0.3)] hover:shadow-[0_0_40px_rgba(0,102,255,0.6)] flex items-center gap-2 border border-white/10"
+              className="px-8 py-4 bg-gradient-to-r from-violet-600 via-emerald-500 to-violet-600 bg-[length:200%_auto] animate-gradient-x text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-[0_0_15px_rgba(139,92,246,0.3)] hover:shadow-[0_0_40px_rgba(139,92,246,0.6)] flex items-center gap-2 border border-white/10"
             >
               Get Free Audit <ArrowRight className="w-5 h-5" />
             </button>
             
             <button 
                onClick={() => document.getElementById(SectionId.CONTACT)?.scrollIntoView({ behavior: 'smooth' })}
-               className="px-8 py-4 bg-nexus-card border border-nexus-accent text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 hover:bg-nexus-accent hover:shadow-[0_0_30px_rgba(0,102,255,0.5)] flex items-center gap-2"
+               className="px-8 py-4 bg-nexus-card border border-nexus-accent text-white font-bold rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 hover:bg-nexus-accent hover:shadow-[0_0_30px_rgba(139,92,246,0.5)] flex items-center gap-2"
             >
               Book a Free Consultation
             </button>
@@ -248,7 +253,7 @@ const Hero: React.FC = () => {
             className="absolute bottom-20 left-0 lg:left-10 z-20 pointer-events-none"
           >
              <div className="p-4 glass-card rounded-2xl flex items-center gap-3 shadow-2xl animate-float" style={{ animationDelay: '1s' }}>
-              <Globe className="w-6 h-6 text-cyan-400" />
+              <Globe className="w-6 h-6 text-emerald-400" />
               <div>
                 <div className="text-xs text-gray-400">Reach</div>
                 <div className="font-bold text-white text-lg">Global</div>
@@ -263,7 +268,7 @@ const Hero: React.FC = () => {
             className="absolute -bottom-4 right-20 z-20 pointer-events-none hidden lg:block"
           >
              <div className="px-4 py-2 glass-card rounded-full flex items-center gap-2 border border-nexus-accent/30">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <div className="w-2 h-2 bg-nexus-glow rounded-full animate-pulse"></div>
               <span className="text-xs font-mono text-nexus-accent">AITHRA SYSTEM ONLINE</span>
             </div>
           </motion.div>

@@ -1,17 +1,38 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, Minimize2, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Minimize2, Sparkles, Trash2 } from 'lucide-react';
 import { sendChatMessage } from '../services/geminiService';
 import { ChatMessage } from '../types';
 
 const ChatBot: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'model', content: "Systems online. I am Aithra's virtual assistant. How can I accelerate your business today?" }
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const initialMessage: ChatMessage = { role: 'model', content: "Systems online. I am Aithra's virtual assistant. How can I accelerate your business today?" };
+
+  // Load chat history from localStorage on mount
+  useEffect(() => {
+    const savedChat = localStorage.getItem('aithra_chat_history');
+    if (savedChat) {
+      try {
+        setMessages(JSON.parse(savedChat));
+      } catch (e) {
+        setMessages([initialMessage]);
+      }
+    } else {
+      setMessages([initialMessage]);
+    }
+  }, []);
+
+  // Save chat history to localStorage whenever messages change
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('aithra_chat_history', JSON.stringify(messages));
+    }
+  }, [messages]);
 
   const suggestions = [
     "What services do you offer?",
@@ -55,6 +76,11 @@ const ChatBot: React.FC = () => {
     }
   };
 
+  const handleClearChat = () => {
+    setMessages([initialMessage]);
+    localStorage.removeItem('aithra_chat_history');
+  };
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -74,12 +100,12 @@ const ChatBot: React.FC = () => {
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-nexus-accent hover:bg-blue-600 text-white shadow-[0_0_20px_rgba(0,102,255,0.5)] flex items-center justify-center border border-white/20"
+            className="fixed bottom-8 right-8 z-50 w-14 h-14 rounded-full bg-nexus-accent hover:bg-violet-600 text-white shadow-[0_0_20px_rgba(139,92,246,0.5)] flex items-center justify-center border border-white/20"
           >
             <MessageSquare className="w-6 h-6" />
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-nexus-glow"></span>
             </span>
           </motion.button>
         )}
@@ -109,12 +135,21 @@ const ChatBot: React.FC = () => {
                   </div>
                 </div>
               </div>
-              <button 
-                onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
-              >
-                <Minimize2 className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                <button 
+                  onClick={handleClearChat}
+                  title="Clear Chat"
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-red-400"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => setIsOpen(false)}
+                  className="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400 hover:text-white"
+                >
+                  <Minimize2 className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Messages Area */}
@@ -193,7 +228,7 @@ const ChatBot: React.FC = () => {
                 <button
                   onClick={() => handleSend()}
                   disabled={!input.trim() || loading}
-                  className="p-3 bg-nexus-accent hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white transition-colors shadow-lg"
+                  className="p-3 bg-nexus-accent hover:bg-violet-600 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl text-white transition-colors shadow-lg"
                 >
                   <Send className="w-4 h-4" />
                 </button>

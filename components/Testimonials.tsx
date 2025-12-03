@@ -61,7 +61,7 @@ const Testimonials: React.FC = () => {
               transition={{ delay: index * 0.2, duration: 0.5 }}
               whileHover={{ 
                 scale: 1.05, 
-                borderColor: '#00CCFF', // Brighter shade of nexus-accent/glow
+                borderColor: '#10B981', // Brighter shade of nexus-glow
                 backgroundColor: 'rgba(255, 255, 255, 0.05)'
               }}
               className="glass-card p-8 rounded-2xl border border-white/5 relative group cursor-default"
@@ -82,6 +82,9 @@ const Testimonials: React.FC = () => {
                 <img 
                   src={item.avatar} 
                   alt={item.name} 
+                  loading="lazy"
+                  width="48"
+                  height="48"
                   className="w-12 h-12 rounded-full object-cover border-2 border-nexus-accent/50 group-hover:border-nexus-accent transition-colors"
                 />
                 <div>

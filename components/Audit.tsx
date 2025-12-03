@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Loader2, ArrowRight } from 'lucide-react';
 import { generateBusinessAudit } from '../services/geminiService';
@@ -26,19 +26,31 @@ const Audit: React.FC = () => {
     setResult(null);
     setStep(0);
 
-    // Simulated progress steps
+    // Start simulating progress steps
     const interval = setInterval(() => {
-      setStep(prev => (prev < steps.length - 1 ? prev + 1 : prev));
+      setStep(prev => {
+        // If we are still loading, only advance up to the second to last step
+        if (prev < steps.length - 2) return prev + 1;
+        return prev;
+      });
     }, 800);
 
     try {
       const data = await generateBusinessAudit(input);
+      
+      // When data arrives, fast forward to the end
       clearInterval(interval);
-      setResult(data);
+      setStep(steps.length - 1);
+      
+      // Small delay to show "Finalizing Report"
+      setTimeout(() => {
+        setResult(data);
+        setLoading(false);
+      }, 600);
+      
     } catch (err) {
       clearInterval(interval);
       setError("Unable to generate audit at this time. Please check your API key or try again later.");
-    } finally {
       setLoading(false);
     }
   };
@@ -63,7 +75,7 @@ const Audit: React.FC = () => {
             </p>
           </div>
 
-          <div className="glass-card rounded-2xl p-8 md:p-12 border border-nexus-accent/20 shadow-2xl shadow-blue-500/10 relative overflow-hidden">
+          <div className="glass-card rounded-2xl p-8 md:p-12 border border-nexus-accent/20 shadow-2xl shadow-violet-500/10 relative overflow-hidden">
             {/* Loading Overlay */}
             <AnimatePresence>
               {loading && (
@@ -83,6 +95,7 @@ const Audit: React.FC = () => {
                       initial={{ width: "0%" }}
                       animate={{ width: "100%" }}
                       transition={{ duration: 4, ease: "linear" }}
+                      style={{ width: `${((step + 1) / steps.length) * 100}%`, transition: 'width 0.5s ease-out' }}
                     />
                   </div>
                 </motion.div>
@@ -101,7 +114,7 @@ const Audit: React.FC = () => {
               <button 
                 onClick={handleAudit}
                 disabled={loading || !input}
-                className="bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] animate-gradient-x hover:shadow-[0_0_35px_rgba(0,102,255,0.6)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 min-w-[160px] border border-white/10"
+                className="bg-gradient-to-r from-violet-600 via-emerald-500 to-violet-600 bg-[length:200%_auto] animate-gradient-x hover:shadow-[0_0_35px_rgba(139,92,246,0.6)] disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-4 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 min-w-[160px] border border-white/10"
               >
                 {loading ? <Loader2 className="animate-spin" /> : <><Sparkles className="w-5 h-5" /> Analyze</>}
               </button>

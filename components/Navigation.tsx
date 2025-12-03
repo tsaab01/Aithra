@@ -10,11 +10,23 @@ const Navigation: React.FC = () => {
   const location = useLocation();
 
   useEffect(() => {
+    let timeoutId: number;
+    
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      // Throttle the scroll event to improve performance
+      if (timeoutId) return;
+      
+      timeoutId = window.setTimeout(() => {
+        setIsScrolled(window.scrollY > 20);
+        timeoutId = 0;
+      }, 100);
     };
+
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
   }, []);
 
   // Handle scrolling after navigation state change
@@ -82,7 +94,7 @@ const Navigation: React.FC = () => {
           ))}
           <button 
             onClick={() => handleNavClick(SectionId.AUDIT)}
-            className="px-5 py-2 rounded-full bg-gradient-to-r from-blue-600 via-cyan-500 to-blue-600 bg-[length:200%_auto] animate-gradient-x text-white text-sm font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-blue-500/25 hover:shadow-[0_0_25px_rgba(0,102,255,0.6)] border border-white/10 hover:border-nexus-glow/50"
+            className="px-5 py-2 rounded-full bg-gradient-to-r from-violet-600 via-emerald-500 to-violet-600 bg-[length:200%_auto] animate-gradient-x text-white text-sm font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg shadow-violet-500/25 hover:shadow-[0_0_25px_rgba(139,92,246,0.6)] border border-white/10 hover:border-nexus-glow/50"
           >
             Get Started
           </button>
